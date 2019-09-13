@@ -1,22 +1,11 @@
 ---
-- hosts: kube-cluster
-  gather_facts: yes
-  become: yes
-  roles:
-    - { role: docker, tags: docker }
 
-- hosts: master
-  gather_facts: yes
-  become: yes
-  roles:
-    - { role: kubernetes/master, tags: master }
-    - { role: cni, tags: cni }
+- hosts: all
+  gather_facts: False
 
-- hosts: node
-  gather_facts: yes
-  become: yes
-  roles:
-    - { role: kubernetes/node, tags: node }
+  tasks:
+  - name: install python 2
+    raw: sudo bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qy python-minimal)"
 
 - hosts: master
   gather_facts: yes
@@ -42,4 +31,23 @@
       when: "additional_features.healthcheck"
       run_once: yes
       tags: healthcheck
+
+- hosts: kube-cluster
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: docker, tags: docker }
+
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kubernetes/master, tags: master }
+    - { role: cni, tags: cni }
+
+- hosts: node
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kubernetes/node, tags: node }
 

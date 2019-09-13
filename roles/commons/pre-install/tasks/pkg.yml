@@ -34,7 +34,13 @@
 - name: Install kubernetes packages (Debian/Ubuntu)
   when: ansible_os_family == "Debian"
   apt:
-    name: "{{ item }}-{{ kube_version | replace('v', '') }}"
+    name: kubelet=1.14.0-00
     update_cache: yes
     state: installed
   with_items: "{{ pkgs }}"
+
+- name: install kubeadm
+  apt:
+    name: kubeadm=1.14.0-00
+    update_cache: yes
+    state: installed
